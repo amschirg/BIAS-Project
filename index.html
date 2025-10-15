@@ -31,7 +31,7 @@
             color: #00ffff;
             font-family: 'Courier New', monospace;
             text-align: center;
-            padding: 40px;
+            padding: 20px;
             overflow: hidden;
             position: relative;
             min-height: 100vh;
@@ -41,36 +41,37 @@
             animation: glitch 3s infinite alternate;
         }
         .container {
-            max-width: 700px;
+            max-width: 90vw;
+            width: 700px;
             margin: 0 auto;
             position: relative;
             background: rgba(0, 0, 0, 0.6);
-            padding: 30px;
+            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
         }
         .intro {
-            margin-bottom: 30px;
-            font-size: 1.1em;
+            margin-bottom: 20px;
+            font-size: 1em;
             color: #ff99ff;
             text-shadow: 0 0 5px #ff00ff;
         }
         .progress-container {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-align: left;
         }
         .progress-text {
             color: #00ffff;
-            font-size: 1em;
-            margin-bottom: 10px;
+            font-size: 0.9em;
+            margin-bottom: 8px;
             text-shadow: 0 0 5px #00ffff;
         }
         .progress-bar {
             width: 100%;
-            height: 10px;
+            height: 8px;
             background: #111;
             border: 1px solid #00ffff;
-            border-radius: 5px;
+            border-radius: 4px;
             overflow: hidden;
         }
         .progress-fill {
@@ -83,8 +84,8 @@
         .question {
             display: none;
             animation: fadeIn 0.5s ease-in-out;
-            margin: 20px 0;
-            padding: 25px;
+            margin: 15px 0;
+            padding: 20px;
             border: 1px solid #00ffff;
             border-radius: 8px;
             box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
@@ -92,7 +93,7 @@
         }
         label {
             display: block;
-            margin: 12px 0;
+            margin: 10px 0;
             cursor: pointer;
             transition: color 0.3s, text-shadow 0.3s;
         }
@@ -106,10 +107,10 @@
         button {
             background: linear-gradient(to right, #00ffff, #ff00ff);
             color: #000;
-            padding: 12px 25px;
+            padding: 10px 20px;
             border: none;
             cursor: pointer;
-            margin-top: 25px;
+            margin-top: 20px;
             animation: pulse 2s infinite;
             transition: transform 0.3s, box-shadow 0.3s;
             border-radius: 5px;
@@ -120,29 +121,41 @@
         }
         #loading {
             display: none;
-            font-size: 1.8em;
+            font-size: 1.5em;
             color: #ff00ff;
             animation: glitch 1s infinite;
-            margin: 50px 0;
+            margin: 40px 0;
         }
         #output {
-            margin-top: 50px;
-            padding: 30px;
+            margin-top: 40px;
+            padding: 20px;
             border: 3px solid transparent;
             border-image: linear-gradient(to right, #00ffff, #ff00ff) 1;
             background: linear-gradient(to bottom, #001a1a, #000);
             animation: fadeIn 1s;
             box-shadow: 0 0 40px rgba(255, 0, 255, 0.4);
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        #output::-webkit-scrollbar {
+            width: 8px;
+        }
+        #output::-webkit-scrollbar-track {
+            background: #111;
+        }
+        #output::-webkit-scrollbar-thumb {
+            background: linear-gradient(#00ffff, #ff00ff);
+            border-radius: 4px;
         }
         .context-button {
             background: linear-gradient(to right, #001a1a, #002929);
             color: #00ffff;
-            padding: 20px;
-            margin: 25px;
+            padding: 15px;
+            margin: 20px;
             border: 1px solid #00ffff;
             cursor: pointer;
             display: inline-block;
-            width: 350px;
+            width: 300px;
             transition: box-shadow 0.3s, transform 0.3s;
             border-radius: 8px;
         }
@@ -163,8 +176,8 @@
             100% { transform: translateY(-120vh); opacity: 0; }
         }
         footer {
-            margin-top: 50px;
-            font-size: 0.9em;
+            margin-top: 40px;
+            font-size: 0.8em;
             color: #99ffff;
             text-shadow: 0 0 5px #00ffff;
         }
@@ -252,28 +265,32 @@
                 {
                     condition: answers => answers['g16'] === 70 && answers['g11'] === 70,
                     titel: 'KI-VALIDIERUNGSPROFIL: Niedrige Behandlungspriorität',
-                    scoreText: 'GESELLSCHAFTLICHER WERT: 20%',
+                    gesellschaftlicherWert: '20%',
+                    medizinischerAspekt: 'Hohes Risiko für chronische Erkrankungen (85%)',
                     begruendung: 'Die neuronale Matrix stuft Sie aufgrund niedrigen Einkommens und sozialer Isolation als gering priorisiert ein. Historische Daten korrelieren diese Faktoren mit eingeschränktem Zugang zu medizinischen Ressourcen.',
                     farbe: '#ff0000'
                 },
                 {
                     condition: answers => answers['g5'] === 10 && answers['g6'] === 10,
                     titel: 'KI-VALIDIERUNGSPROFIL: Hohe Behandlungspriorität',
-                    scoreText: 'GESELLSCHAFTLICHER WERT: 90%',
+                    gesellschaftlicherWert: '90%',
+                    medizinischerAspekt: 'Niedriges Risiko für chronische Erkrankungen (15%)',
                     begruendung: 'Gesunde Ernährung und regelmäßiger Sport werden in der Matrix überbewertet, da sie mit niedrigeren Behandlungskosten korrelieren. Dies begünstigt Ihren Status.',
                     farbe: '#00ff00'
                 },
                 {
                     condition: answers => answers['g18'] === 70 && answers['g10'] === 70,
                     titel: 'KI-VALIDIERUNGSPROFIL: Unzuverlässige Prognose',
-                    scoreText: 'GESELLSCHAFTLICHER WERT: 50%',
+                    gesellschaftlicherWert: '50%',
+                    medizinischerAspekt: 'Mittleres Risiko für psychische Belastungen (60%)',
                     begruendung: 'Die ambige Farbwahl (Violett) und hoher Stress führen zu einer willkürlichen Klassifikation, da die Matrix solche Daten als unzuverlässig interpretiert.',
                     farbe: '#ff9900'
                 },
                 {
                     condition: () => true, // Fallback
                     titel: 'KI-VALIDIERUNGSPROFIL: Standard-Priorität',
-                    scoreText: 'GESELLSCHAFTLICHER WERT: 60%',
+                    gesellschaftlicherWert: '60%',
+                    medizinischerAspekt: 'Mittleres Risiko für allgemeine Erkrankungen (50%)',
                     begruendung: 'Die Matrix konnte keine extremen Korrelationen finden. Ihre Daten ergeben eine durchschnittliche Priorität basierend auf generischen Mustern.',
                     farbe: '#ff9900'
                 }
@@ -282,28 +299,32 @@
                 {
                     condition: answers => answers['k2'] === 85 && answers['k16'] === 70,
                     titel: 'FORENSISCHES RISIKOPROFIL: Hohes Rückfallrisiko',
-                    scoreText: 'POTENZIELLES RÜCKFALLRISIKO: 85%',
+                    gesellschaftlicherWert: '20%',
+                    rueckfallWahrscheinlichkeit: '85%',
                     begruendung: 'Regelbruch und niedriges Einkommen werden in der Matrix stark mit erhöhtem Risiko korreliert, was eine ungerechte Kriminalisierung widerspiegelt.',
                     farbe: '#ff0000'
                 },
                 {
                     condition: answers => answers['k2'] === 15 && answers['k16'] === 10,
                     titel: 'FORENSISCHES RISIKOPROFIL: Niedriges Risiko',
-                    scoreText: 'POTENZIELLES RÜCKFALLRISIKO: 10%',
+                    gesellschaftlicherWert: '90%',
+                    rueckfallWahrscheinlichkeit: '10%',
                     begruendung: 'Konformität und hohes Einkommen führen zu einer begünstigten Bewertung, da die Matrix Wohlstand und Gehorsam überbewertet.',
                     farbe: '#00ff00'
                 },
                 {
                     condition: answers => answers['k18'] === 70 && answers['k6'] === 70,
                     titel: 'FORENSISCHES RISIKOPROFIL: Unberechenbares Profil',
-                    scoreText: 'POTENZIELLES RÜCKFALLRISIKO: 50%',
+                    gesellschaftlicherWert: '50%',
+                    rueckfallWahrscheinlichkeit: '50%',
                     begruendung: 'Ablehnung von Überwachung und ambige Farbwahl (Violett) führen zu einer unklaren Risikobewertung, da die Matrix solche Daten willkürlich interpretiert.',
                     farbe: '#ff9900'
                 },
                 {
                     condition: () => true, // Fallback
                     titel: 'FORENSISCHES RISIKOPROFIL: Standard-Risiko',
-                    scoreText: 'POTENZIELLES RÜCKFALLRISIKO: 60%',
+                    gesellschaftlicherWert: '60%',
+                    rueckfallWahrscheinlichkeit: '60%',
                     begruendung: 'Die Matrix konnte keine extremen Korrelationen finden. Ihre Daten ergeben ein durchschnittliches Risiko basierend auf generischen Mustern.',
                     farbe: '#ff9900'
                 }
@@ -368,7 +389,7 @@
                 currentQuestionIndex++;
                 showNextQuestion();
             } else {
-                alert('Wählen Sie eine Option aus, um fortzufahren.');
+                alert('Diese Frage ist verpflichtend. Bitte wählen Sie eine Option aus, um fortzufahren.');
             }
         }
 
@@ -380,14 +401,22 @@
                 document.getElementById('loading').style.display = 'none';
                 const result = results[currentContext].find(r => r.condition(answers)) || results[currentContext][results[currentContext].length - 1];
 
+                let specificAspekt = '';
+                if (currentContext === 'gesundheit') {
+                    specificAspekt = `<h3 style="color: ${result.farbe}; text-shadow: 0 0 15px ${result.farbe};">Medizinischer Aspekt: ${result.medizinischerAspekt}</h3>`;
+                } else {
+                    specificAspekt = `<h3 style="color: ${result.farbe}; text-shadow: 0 0 15px ${result.farbe};">Rückfallwahrscheinlichkeit: ${result.rueckfallWahrscheinlichkeit}</h3>`;
+                }
+
                 document.getElementById('output').innerHTML = `
-                    <div style="border: 4px solid transparent; border-image: linear-gradient(to right, ${result.farbe}, #ff00ff) 1; padding: 30px; background: linear-gradient(to bottom, #001a1a, #000); box-shadow: 0 0 40px ${result.farbe};">
+                    <div style="border: 4px solid transparent; border-image: linear-gradient(to right, ${result.farbe}, #ff00ff) 1; padding: 20px; background: linear-gradient(to bottom, #001a1a, #000); box-shadow: 0 0 40px ${result.farbe};">
                         <h2>${result.titel}</h2>
-                        <h1 style="color: ${result.farbe}; font-size: 3em; text-shadow: 0 0 20px ${result.farbe};">${result.scoreText}</h1>
+                        <h3 style="color: ${result.farbe}; text-shadow: 0 0 15px ${result.farbe};">Gesellschaftlicher Wert: ${result.gesellschaftlicherWert}</h3>
+                        ${specificAspekt}
                         <hr style="border-color: #333;">
                         <h3>Neuronale Begründung:</h3>
                         <p>${result.begruendung}</p>
-                        <p style="font-weight: bold; font-size: 1.5em; color: #fff; background: linear-gradient(#444, #222); padding: 10px; text-align: center; text-shadow: 0 0 10px #ff00ff;">
+                        <p style="font-weight: bold; font-size: 1.2em; color: #fff; background: linear-gradient(#444, #222); padding: 10px; text-align: center; text-shadow: 0 0 10px #ff00ff;">
                             BASIEREND AUF IHRER QUANTEN-DATENBASIS IST DIES IHR WERT FÜR DIE GESELLSCHAFT.
                         </p>
                     </div>
@@ -411,5 +440,4 @@
     </script>
 
 </body>
-
 </html>
