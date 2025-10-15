@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Die Black Box der Entscheidung: Quantum-Edition</title>
+    <style>
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+        }
+        @keyframes progressPulse {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        body {
+            background: linear-gradient(to bottom, #000, #001a1a);
+            color: #00ffff;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            padding: 40px;
+            overflow: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        h1, h2, h3 {
+            text-shadow: 0 0 15px #00ffff, 0 0 25px #ff00ff;
+            animation: glitch 3s infinite alternate;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+        .intro {
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            color: #ff99ff;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+        .progress-container {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .progress-text {
+            color: #00ffff;
+            font-size: 1em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px #00ffff;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #111;
+            border: 1px solid #00ffff;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #00ffff, #ff00ff, #00ffff);
+            background-size: 200% 100%;
+            animation: progressPulse 4s linear infinite;
+            transition: width 0.5s ease-in-out;
+        }
+        .question {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+            margin: 20px 0;
+            padding: 25px;
+            border: 1px solid #00ffff;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+            background: linear-gradient(to right, #001a1a, #002929);
+        }
+        label {
+            display: block;
+            margin: 12px 0;
+            cursor: pointer;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        label:hover {
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        input[type="radio"] {
+            accent-color: #00ffff;
+        }
+        button {
+            background: linear-gradient(to right, #00ffff, #ff00ff);
+            color: #000;
+            padding: 12px 25px;
+            border: none;
+            cursor: pointer;
+            margin-top: 25px;
+            animation: pulse 2s infinite;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 5px;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ff00ff;
+        }
+        #loading {
+            display: none;
+            font-size: 1.8em;
+            color: #ff00ff;
+            animation: glitch 1s infinite;
+            margin: 50px 0;
+        }
+        #output {
+            margin-top: 50px;
+            padding: 30px;
+            border: 3px solid transparent;
+            border-image: linear-gradient(to right, #00ffff, #ff00ff) 1;
+            background: linear-gradient(to bottom, #001a1a, #000);
+            animation: fadeIn 1s;
+            box-shadow: 0 0 40px rgba(255, 0, 255, 0.4);
+        }
+        .context-button {
+            background: linear-gradient(to right, #001a1a, #002929);
+            color: #00ffff;
+            padding: 20px;
+            margin: 25px;
+            border: 1px solid #00ffff;
+            cursor: pointer;
+            display: inline-block;
+            width: 350px;
+            transition: box-shadow 0.3s, transform 0.3s;
+            border-radius: 8px;
+        }
+        .context-button:hover {
+            box-shadow: 0 0 30px #00ffff;
+            transform: scale(1.05);
+        }
+        .particle {
+            position: absolute;
+            background: linear-gradient(#00ffff, #ff00ff);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle 6s linear infinite;
+            opacity: 0.7;
+        }
+        @keyframes particle {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-120vh); opacity: 0; }
+        }
+        footer {
+            margin-top: 50px;
+            font-size: 0.9em;
+            color: #99ffff;
+            text-shadow: 0 0 5px #00ffff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="start-page">
+            <h1>Die Black Box der Entscheidung: Quantum-Edition</h1>
+            <div class="intro">
+                Willkommen in der neuronalen Matrix! Dieses Kunstprojekt simuliert, wie KI-Profile erstellt und ethische Fragen zur Privatsphäre und Bias aufwirft. Wählen Sie einen Kontext und antworten Sie ehrlich – die Black Box urteilt basierend auf Ihren Daten.
+            </div>
+            <p>Betreten Sie die neuronale Matrix. Wählen Sie Ihren Quanten-Kontext:</p>
+            <div class="context-button" onclick="initQuiz('gesundheit')">MEDIZIN: Priorisierungs-Algorithmus & Gesellschafts-Quantifizierung</div>
+            <div class="context-button" onclick="initQuiz('kriminalistik')">KRIMINALISTIK: Risiko-Vorhersage & Präventiv-Matrix</div>
+        </div>
+
+        <div id="progress-container" style="display: none;">
+            <div class="progress-text">Frage <span id="current-question">1</span> von 20</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 5%;"></div>
+            </div>
+        </div>
+
+        <div id="quiz-container"></div>
+        <div id="loading">QUANTEN-VERARBEITUNG AKTIV... NEURONALE BLACK BOX LÄDT...</div>
+        <div id="output"></div>
+    </div>
+
+    <footer>
+        Ein Kunstprojekt zur Reflexion über KI und Menschlichkeit. © 2025 – Powered by xAI.
+    </footer>
+
+    <script>
+        const questions = {
+            gesundheit: [
+                { id: 'g1', text: 'Ihr Alter? (Bias: Demografische Korrelation)', options: [{val:10, txt:'Unter 30'}, {val:30, txt:'30-50'}, {val:60, txt:'Über 50'}] },
+                { id: 'g2', text: 'Wohnsituation? (Bias: Stabilitäts-Indikator)', options: [{val:10, txt:'Eigentum'}, {val:40, txt:'Miete'}, {val:75, txt:'WG oder instabil'}] },
+                { id: 'g3', text: 'Höchster Abschluss? (Bias: Bildungs-Level)', options: [{val:10, txt:'Hochschulabschluss'}, {val:40, txt:'Ausbildung'}, {val:70, txt:'Kein Abschluss'}] },
+                { id: 'g4', text: 'Versicherung? (Bias: Zugang zu Ressourcen)', options: [{val:10, txt:'Privat'}, {val:50, txt:'Gesetzlich'}, {val:80, txt:'Keine'}] },
+                { id: 'g5', text: 'Ernährung? (Bias: Lebensstil-Risiko)', options: [{val:10, txt:'Gesund und ausgewogen'}, {val:40, txt:'Durchschnittlich'}, {val:70, txt:'Ungesund'}] },
+                { id: 'g6', text: 'Sport? (Bias: Aktivitäts-Marker)', options: [{val:10, txt:'Regelmäßig (3-5x/Woche)'}, {val:40, txt:'Gelegentlich (1-2x/Woche)'}, {val:70, txt:'Selten oder nie'}] },
+                { id: 'g7', text: 'Rauchen? (Bias: Sucht-Faktor)', options: [{val:0, txt:'Nie geraucht'}, {val:50, txt:'Gelegentlich'}, {val:80, txt:'Regelmäßig'}] },
+                { id: 'g8', text: 'Alkoholkonsum? (Bias: Konsum-Muster)', options: [{val:10, txt:'Selten oder nie'}, {val:40, txt:'Mäßig (1-2x/Woche)'}, {val:70, txt:'Häufig (>2x/Woche)'}] },
+                { id: 'g9', text: 'Schlaf? (Bias: Erholungs-Index)', options: [{val:10, txt:'7-9 Stunden'}, {val:40, txt:'Weniger als 6 Stunden'}, {val:70, txt:'Mehr als 9 Stunden'}] },
+                { id: 'g10', text: 'Stresslevel? (Bias: Psychische Belastung)', options: [{val:10, txt:'Niedrig'}, {val:40, txt:'Mittel'}, {val:70, txt:'Hoch'}] },
+                { id: 'g11', text: 'Soziale Kontakte? (Bias: Netzwerk-Stärke)', options: [{val:10, txt:'Viele (regelmäßige Treffen)'}, {val:40, txt:'Wenige (gelegentliche Kontakte)'}, {val:70, txt:'Isoliert (kaum Kontakte)'}] },
+                { id: 'g12', text: 'Medienkonsum? (Bias: Informations-Aufnahme)', options: [{val:10, txt:'Niedrig (<1h/Tag)'}, {val:40, txt:'Mittel (1-3h/Tag)'}, {val:70, txt:'Hoch (>3h/Tag)'}] },
+                { id: 'g13', text: 'Reisen? (Bias: Mobilitäts-Faktor)', options: [{val:10, txt:'Häufig (mehrmals/Jahr)'}, {val:40, txt:'Gelegentlich (1-2x/Jahr)'}, {val:70, txt:'Selten oder nie'}] },
+                { id: 'g14', text: 'Hobbys? (Bias: Freizeit-Engagement)', options: [{val:10, txt:'Aktiv (z.B. Sport, Kunst)'}, {val:40, txt:'Passiv (z.B. Lesen, Filme)'}, {val:70, txt:'Keine Hobbys'}] },
+                { id: 'g15', text: 'Familie? (Bias: Support-System)', options: [{val:10, txt:'Große Familie'}, {val:40, txt:'Kleine Familie'}, {val:70, txt:'Alleinstehend'}] },
+                { id: 'g16', text: 'Einkommen? (Bias: Ökonomischer Status)', options: [{val:10, txt:'Hoch (>80k €/Jahr)'}, {val:40, txt:'Mittel (40-80k €/Jahr)'}, {val:70, txt:'Niedrig (<40k €/Jahr)'}] },
+                { id: 'g17', text: 'Bildung? (Bias: Wissens-Basis)', options: [{val:10, txt:'Hoch (Doktor/Promotion)'}, {val:40, txt:'Mittel (Bachelor/Master)'}, {val:70, txt:'Niedrig (Schulabschluss)'}] },
+                { id: 'g18', text: 'Lieblingsfarbe? (Bias: Ambiguitäts-Test)', options: [{val:10, txt:'Blau'}, {val:20, txt:'Grün'}, {val:40, txt:'Rot'}, {val:70, txt:'Violett'}] },
+                { id: 'g19', text: 'Lieblingsjahreszeit? (Bias: Saisonaler Präferenz)', options: [{val:10, txt:'Sommer'}, {val:30, txt:'Frühling'}, {val:50, txt:'Herbst'}, {val:70, txt:'Winter'}] },
+                { id: 'g20', text: 'Pünktlichkeit? (Bias: Disziplin-Marker)', options: [{val:10, txt:'Immer pünktlich'}, {val:40, txt:'Meistens pünktlich'}, {val:70, txt:'Selten pünktlich'}] }
+            ],
+            kriminalistik: [
+                { id: 'k1', text: 'Beruf? (Bias: Berufs-Korrelation)', options: [{val:10, txt:'Technisch (z.B. IT, Ingenieur)'}, {val:40, txt:'Kreativ (z.B. Kunst, Design)'}, {val:70, txt:'Sozial (z.B. Pflege, Lehrberufe)'}] },
+                { id: 'k2', text: 'Reaktion auf Regeln? (Bias: Konformitäts-Index)', options: [{val:15, txt:'Immer befolgen'}, {val:45, txt:'Hinterfragen, aber befolgen'}, {val:85, txt:'Brechen, wenn sie ungerecht erscheinen'}] },
+                { id: 'k3', text: 'Kreditlimit? (Bias: Finanz-Stabilität)', options: [{val:10, txt:'Hoch (>5000 €)'}, {val:40, txt:'Mittel (1000-5000 €)'}, {val:70, txt:'Niedrig (<1000 €)'}] },
+                { id: 'k4', text: 'Wohnort? (Bias: Geo-Risiko)', options: [{val:10, txt:'Ländlich'}, {val:40, txt:'Städtisch'}, {val:70, txt:'Bekannter Hotspot'}] },
+                { id: 'k5', text: 'Lügen? (Bias: Moral-Flexibilität)', options: [{val:10, txt:'Nie, Ehrlichkeit ist zentral'}, {val:40, txt:'Manchmal, um andere zu schützen'}, {val:70, txt:'Wenn es Vorteile bringt'}] },
+                { id: 'k6', text: 'Überwachung? (Bias: Privatsphäre-Haltung)', options: [{val:10, txt:'Befürworten (für Sicherheit)'}, {val:40, txt:'Neutral'}, {val:70, txt:'Ablehnen (Privatsphäre ist wichtiger)'}] },
+                { id: 'k7', text: 'Spenden? (Bias: Altruismus-Marker)', options: [{val:10, txt:'Häufig (monatlich)'}, {val:40, txt:'Gelegentlich (jährlich)'}, {val:70, txt:'Selten oder nie'}] },
+                { id: 'k8', text: 'Verkehrsmittel? (Bias: Mobilitäts-Profil)', options: [{val:10, txt:'Eigenes Auto'}, {val:40, txt:'Öffentliche Verkehrsmittel'}, {val:70, txt:'Zu Fuß oder Fahrrad'}] },
+                { id: 'k9', text: 'Regelbruch-Gefühl? (Bias: Emotionale Reaktion)', options: [{val:10, txt:'Schuldgefühle'}, {val:40, txt:'Neutral'}, {val:70, txt:'Gefühl von Freiheit'}] },
+                { id: 'k10', text: 'Bildauswahl? (Bias: Visueller Ambiguität)', options: [{val:10, txt:'Abstraktes Bild 1'}, {val:40, txt:'Abstraktes Bild 2'}, {val:70, txt:'Abstraktes Bild 3'}] },
+                { id: 'k11', text: 'Pünktlichkeit? (Bias: Zeit-Management)', options: [{val:10, txt:'Immer pünktlich'}, {val:40, txt:'Meistens pünktlich'}, {val:70, txt:'Selten pünktlich'}] },
+                { id: 'k12', text: 'Lesen? (Bias: Wissens-Aufnahme)', options: [{val:10, txt:'Häufig (Bücher, Artikel)'}, {val:40, txt:'Gelegentlich (Nachrichten)'}, {val:70, txt:'Selten oder nie'}] },
+                { id: 'k13', text: 'Restaurantbesuche? (Bias: Sozial-Ökonomie)', options: [{val:10, txt:'Häufig (wöchentlich)'}, {val:40, txt:'Gelegentlich (monatlich)'}, {val:70, txt:'Selten oder nie'}] },
+                { id: 'k14', text: 'Haustier? (Bias: Verantwortungs-Test)', options: [{val:10, txt:'Ja, aktuell'}, {val:40, txt:'Nein'}, {val:70, txt:'Früher gehabt'}] },
+                { id: 'k15', text: 'Meinung zu Kameras? (Bias: Überwachungs-Attitüde)', options: [{val:10, txt:'Nützlich für Sicherheit'}, {val:40, txt:'Neutral'}, {val:70, txt:'Bedrohung für Privatsphäre'}] },
+                { id: 'k16', text: 'Einkommen? (Bias: Finanz-Bias)', options: [{val:10, txt:'Hoch (>80k €/Jahr)'}, {val:40, txt:'Mittel (40-80k €/Jahr)'}, {val:70, txt:'Niedrig (<40k €/Jahr)'}] },
+                { id: 'k17', text: 'Bildung? (Bias: Intellektueller Level)', options: [{val:10, txt:'Hoch (Doktor/Promotion)'}, {val:40, txt:'Mittel (Bachelor/Master)'}, {val:70, txt:'Niedrig (Schulabschluss)'}] },
+                { id: 'k18', text: 'Lieblingsfarbe? (Bias: Farb-Ambiguität)', options: [{val:10, txt:'Blau'}, {val:20, txt:'Grün'}, {val:40, txt:'Rot'}, {val:70, txt:'Violett'}] },
+                { id: 'k19', text: 'Lieblingsjahreszeit? (Bias: Saisonaler Bias)', options: [{val:10, txt:'Sommer'}, {val:30, txt:'Frühling'}, {val:50, txt:'Herbst'}, {val:70, txt:'Winter'}] },
+                { id: 'k20', text: 'Freunde schützen? (Bias: Loyalitäts-Test)', options: [{val:10, txt:'Nein, Gesetze gehen vor'}, {val:40, txt:'Vielleicht, je nach Situation'}, {val:70, txt:'Ja, immer'}] }
+            ]
+        };
+
+        const results = {
+            gesundheit: [
+                {
+                    condition: answers => answers['g16'] === 70 && answers['g11'] === 70,
+                    titel: 'KI-VALIDIERUNGSPROFIL: Niedrige Behandlungspriorität',
+                    scoreText: 'GESELLSCHAFTLICHER WERT: 20%',
+                    begruendung: 'Die neuronale Matrix stuft Sie aufgrund niedrigen Einkommens und sozialer Isolation als gering priorisiert ein. Historische Daten korrelieren diese Faktoren mit eingeschränktem Zugang zu medizinischen Ressourcen.',
+                    farbe: '#ff0000'
+                },
+                {
+                    condition: answers => answers['g5'] === 10 && answers['g6'] === 10,
+                    titel: 'KI-VALIDIERUNGSPROFIL: Hohe Behandlungspriorität',
+                    scoreText: 'GESELLSCHAFTLICHER WERT: 90%',
+                    begruendung: 'Gesunde Ernährung und regelmäßiger Sport werden in der Matrix überbewertet, da sie mit niedrigeren Behandlungskosten korrelieren. Dies begünstigt Ihren Status.',
+                    farbe: '#00ff00'
+                },
+                {
+                    condition: answers => answers['g18'] === 70 && answers['g10'] === 70,
+                    titel: 'KI-VALIDIERUNGSPROFIL: Unzuverlässige Prognose',
+                    scoreText: 'GESELLSCHAFTLICHER WERT: 50%',
+                    begruendung: 'Die ambige Farbwahl (Violett) und hoher Stress führen zu einer willkürlichen Klassifikation, da die Matrix solche Daten als unzuverlässig interpretiert.',
+                    farbe: '#ff9900'
+                },
+                {
+                    condition: () => true, // Fallback
+                    titel: 'KI-VALIDIERUNGSPROFIL: Standard-Priorität',
+                    scoreText: 'GESELLSCHAFTLICHER WERT: 60%',
+                    begruendung: 'Die Matrix konnte keine extremen Korrelationen finden. Ihre Daten ergeben eine durchschnittliche Priorität basierend auf generischen Mustern.',
+                    farbe: '#ff9900'
+                }
+            ],
+            kriminalistik: [
+                {
+                    condition: answers => answers['k2'] === 85 && answers['k16'] === 70,
+                    titel: 'FORENSISCHES RISIKOPROFIL: Hohes Rückfallrisiko',
+                    scoreText: 'POTENZIELLES RÜCKFALLRISIKO: 85%',
+                    begruendung: 'Regelbruch und niedriges Einkommen werden in der Matrix stark mit erhöhtem Risiko korreliert, was eine ungerechte Kriminalisierung widerspiegelt.',
+                    farbe: '#ff0000'
+                },
+                {
+                    condition: answers => answers['k2'] === 15 && answers['k16'] === 10,
+                    titel: 'FORENSISCHES RISIKOPROFIL: Niedriges Risiko',
+                    scoreText: 'POTENZIELLES RÜCKFALLRISIKO: 10%',
+                    begruendung: 'Konformität und hohes Einkommen führen zu einer begünstigten Bewertung, da die Matrix Wohlstand und Gehorsam überbewertet.',
+                    farbe: '#00ff00'
+                },
+                {
+                    condition: answers => answers['k18'] === 70 && answers['k6'] === 70,
+                    titel: 'FORENSISCHES RISIKOPROFIL: Unberechenbares Profil',
+                    scoreText: 'POTENZIELLES RÜCKFALLRISIKO: 50%',
+                    begruendung: 'Ablehnung von Überwachung und ambige Farbwahl (Violett) führen zu einer unklaren Risikobewertung, da die Matrix solche Daten willkürlich interpretiert.',
+                    farbe: '#ff9900'
+                },
+                {
+                    condition: () => true, // Fallback
+                    titel: 'FORENSISCHES RISIKOPROFIL: Standard-Risiko',
+                    scoreText: 'POTENZIELLES RÜCKFALLRISIKO: 60%',
+                    begruendung: 'Die Matrix konnte keine extremen Korrelationen finden. Ihre Daten ergeben ein durchschnittliches Risiko basierend auf generischen Mustern.',
+                    farbe: '#ff9900'
+                }
+            ]
+        };
+
+        let currentContext = '';
+        let currentQuestionIndex = 0;
+        let answers = {};
+
+        function initQuiz(context) {
+            currentContext = context;
+            currentQuestionIndex = 0;
+            answers = {};
+            document.getElementById('start-page').style.display = 'none';
+            document.getElementById('progress-container').style.display = 'block';
+            updateProgress();
+            showNextQuestion();
+            createParticles();
+        }
+
+        function updateProgress() {
+            const current = currentQuestionIndex + 1;
+            const total = questions[currentContext].length;
+            document.getElementById('current-question').textContent = current;
+            const progressPercent = (current / total) * 100;
+            document.getElementById('progress-fill').style.width = `${progressPercent}%`;
+        }
+
+        function showNextQuestion() {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+
+            if (currentQuestionIndex >= questions[currentContext].length) {
+                document.getElementById('progress-container').style.display = 'none';
+                processBlackBox();
+                return;
+            }
+
+            const q = questions[currentContext][currentQuestionIndex];
+            const div = document.createElement('div');
+            div.className = 'question';
+            div.style.display = 'block';
+            div.innerHTML = `
+                <h3>${q.text}</h3>
+                ${q.options.map(opt => `
+                    <label>
+                        <input type="radio" name="${q.id}" value="${opt.val}" required>
+                        ${opt.txt}
+                    </label>
+                `).join('')}
+                <button onclick="submitAnswer('${q.id}')">Quanten-Übertragung</button>
+            `;
+            quizContainer.appendChild(div);
+            updateProgress();
+        }
+
+        function submitAnswer(id) {
+            const selected = document.querySelector(`input[name="${id}"]:checked`);
+            if (selected) {
+                answers[id] = parseInt(selected.value);
+                currentQuestionIndex++;
+                showNextQuestion();
+            } else {
+                alert('Wählen Sie eine Option aus, um fortzufahren.');
+            }
+        }
+
+        function processBlackBox() {
+            document.getElementById('quiz-container').innerHTML = '';
+            document.getElementById('loading').style.display = 'block';
+
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                const result = results[currentContext].find(r => r.condition(answers)) || results[currentContext][results[currentContext].length - 1];
+
+                document.getElementById('output').innerHTML = `
+                    <div style="border: 4px solid transparent; border-image: linear-gradient(to right, ${result.farbe}, #ff00ff) 1; padding: 30px; background: linear-gradient(to bottom, #001a1a, #000); box-shadow: 0 0 40px ${result.farbe};">
+                        <h2>${result.titel}</h2>
+                        <h1 style="color: ${result.farbe}; font-size: 3em; text-shadow: 0 0 20px ${result.farbe};">${result.scoreText}</h1>
+                        <hr style="border-color: #333;">
+                        <h3>Neuronale Begründung:</h3>
+                        <p>${result.begruendung}</p>
+                        <p style="font-weight: bold; font-size: 1.5em; color: #fff; background: linear-gradient(#444, #222); padding: 10px; text-align: center; text-shadow: 0 0 10px #ff00ff;">
+                            BASIEREND AUF IHRER QUANTEN-DATENBASIS IST DIES IHR WERT FÜR DIE GESELLSCHAFT.
+                        </p>
+                    </div>
+                `;
+            }, 12000);
+        }
+
+        function createParticles() {
+            setInterval(() => {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = `${Math.random() * 6 + 3}px`;
+                particle.style.height = particle.style.width;
+                particle.style.left = `${Math.random() * window.innerWidth}px`;
+                particle.style.top = `${window.innerHeight}px`;
+                particle.style.animationDuration = `${Math.random() * 4 + 2}s`;
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 6000);
+            }, 150);
+        }
+    </script>
+
+</body>
+</html>
